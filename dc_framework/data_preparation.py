@@ -1,4 +1,5 @@
 import torch
+from torch.utils.data.distributed import DistributedSampler
 
 
 class Dataset:
@@ -24,6 +25,10 @@ class Dataset:
             self, batch_size=batch_size, collate_fn=self.default_collate_fn
         )
         return train_dataloader
+
+    def get_distributed_dataloader(self, batch_size):
+        sampler = DistributedSampler(self)
+        return torch.utils.data.DataLoader(self, batch_size=batch_size, sampler=sampler)
 
     def default_collate_fn(self, batch):
         features = []
